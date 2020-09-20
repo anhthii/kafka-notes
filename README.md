@@ -1,19 +1,16 @@
 # Kafka notes
 
-These are the most relevant contents that I collected through some books and courses then organized to help anyone who wants to learn Apache Kafka without going through too many resources on the Internet. Below might be the only material you need to grasp quite a deep understanding of Kafka as well as how to configure your applications to use Kafka properly in production.
+These are the most relevant contents that I collected through some books and courses. I organized and make some edits to help deliver the concepts about Apache Kafka in the most comprehensible way. Anyone who wants to learn Apache Kafka can refrence these notes without going through too many resources on the Internet. Below might be the only material you need to grasp quite a basic understanding of Kafka as well as how to configure your applications to use Kafka properly in production.
 
 If you want to get a deeper understanding of Kafka or how to use Kafka Stream for big data processing. I highly recommend you check out the material including some books and courses that I linked in the reference section.
-
-
-
 
 ![](images/2020-09-20-13-00-07.png)
 <sup>image from https://www.cloudkarafka.com/blog/<sup>
 
-If you want a better viewing exeperience, visit: https://anhthi.netlify.app/docs/architecture/message_queue/kafka
+If you want a better reading exeperience, visit: https://anhthi.netlify.app/docs/architecture/message_queue/kafka
 
 Table of contents:
-
+- [Kafka notes](#kafka-notes)
   - [Kafka introduction](#kafka-introduction)
     - [The data problem](#the-data-problem)
     - [Why use Kafka?](#why-use-kafka)
@@ -21,12 +18,12 @@ Table of contents:
     - [Compared to other message queue systems](#compared-to-other-message-queue-systems)
     - [Use Cases](#use-cases)
   - [Kafka architecture](#kafka-architecture)
-      - [Kafka is a message broker](#kafka-is-a-message-broker)
     - [Log](#log)
-      - [How logs work?](#how-logs-work)
     - [Topics](#topics)
     - [Partitions](#partitions)
+    - [Difference between Partition and Log?](#difference-between-partition-and-log)
       - [Partitions group data by key](#partitions-group-data-by-key)
+    - [Important characteristics of Kafka](#important-characteristics-of-kafka)
   - [Producers and Consumers](#producers-and-consumers)
     - [Producer](#producer)
     - [Consumer](#consumer)
@@ -62,9 +59,9 @@ Table of contents:
       - [Consumer offset](#consumer-offset)
       - [Consumer offset reset behaviours](#consumer-offset-reset-behaviours)
       - [Delivery semantics for consumers](#delivery-semantics-for-consumers)
+      - [Offset management](#offset-management)
       - [Consumer offset commits strategies](#consumer-offset-commits-strategies)
       - [Schema registry](#schema-registry)
-      - [Offset management](#offset-management)
   - [Case study](#case-study)
     - [Video analytics - MovieFlix](#video-analytics---movieflix)
     - [GetTaxi](#gettaxi)
@@ -99,7 +96,7 @@ That's where Apache Kafka comes in as an effective solution. Apache Kafka is a p
 
 ### Why is Kafka fast?
 
-- **Zero Copy**: Basically Kafka calls the OS kernal direct rather than at the application layer to move data fast.
+- **Zero Copy**: Basically Kafka calls the OS kernal directly rather than at the application layer to move data fast.
 - **Batch data in chunks**:  Kafka is all about batching the data into chunks. This minimises cross machine latency with all the buffering/copying that accompanies this.
 - **Avoids Random Disk Access**: Kafka is designed to access the disk in sequential manner. This enables it to get similar speeds from a physical disk compared with memory.
 - **Can scale Horizontally**: The ability to have thousands of partitions for a single topic spread among thousands of machines means Kafka can handle huge loads.
@@ -113,30 +110,24 @@ That's where Apache Kafka comes in as an effective solution. Apache Kafka is a p
 
 - **Activity tracking**: The original use case for Kafka, designed at LinkedIn, is that of user activity tracking.
 
-- **Messaging**: wher applications need to send notifications to users. Those can produce messags without needing to be concerend about formatting. Then an other applicatoin can read all the messages and handle them consistently
+- **Messaging**: wher applications need to send notifications to users. Those can produce messages without needing to be concerend about formatting. Then an other applicatoin can read all the messages and handle them consistently
 - **Metrics and logging**
 - **Commit log**: Database changes can be published to Kafka and applications can easily monitor this stream to receive live updates as they happen. 
 - **Stream processing**: Kafka is extremely good for streaming and processing huge datasets.
 
 ## Kafka architecture
 
-#### Kafka is a message broker
-A broker is an intermediary that brings together two parties that don't necessarily know each other for a mutually beneficicial exchange or deal.
-- Stores and retrives message from topic. Doesn't keep any state of producers or consumers
+Kafka is a message broker. A broker is an intermediary that brings together two parties that don't necessarily know each other for a mutually beneficicial exchange or deal.
 
-- Messsages are written into Kafka in batches. A batch is just a collection of messages, all of which are being produced to the same topic and partition.
 
 ### Log
-Is a file that Kafka appends incoming records to.
-To help manage the load of messages coming into a topic. Kafka use partitions
-
-A log is an append-only, totally ordered sequence of records ordered by time
+Is a file that Kafka appends incoming records to. A log is an append-only, totally ordered sequence of records ordered by time
 
 ![](images/2020-09-16-10-16-01.png)
 
-#### How logs work?
+Configuration setting `log.dir`, specifies where `Kafka` stores log data on disk.
 
-Configuration setting `log.dir`, specifies where `Kafka` stores log data
+![](images/2020-09-20-18-15-34.png)
 
 ### Topics
 
@@ -147,7 +138,9 @@ Topic name examples:
 - customers
 - paymments
 
-Topics are broken down into a number of partitions.  
+To help manage the load of messages coming into a topic. Kafka use `partitions`
+  
+Topics are broken down into a number of `partitions`. 
 
 `Partitions` are the way that Kafka provides redundancy and scalability. Each partition can be hosted on a different server, which means that a single topic can be scaled horizontally across multiple servers.
 
@@ -156,20 +149,34 @@ Topics are broken down into a number of partitions.
 ### Partitions
 - Help increasing throughput
 - Allows topic messages to be spread across several machines so that the capacity of a given topic isn't limited to the availble disk space one one server
-
-
-
 ![](images/2020-09-17-10-34-53.png)
+  
+
+### Difference between Partition and Log?
+At this time, you can come up with a question. Wait a minute, Aren't Log and Partition the same thing?
+At first glance, they seems to look the same, but here are the difference: 
+- Log: physical part of a topic, where a topic is stored on the disk.
+- Partition: logical unit used to break down a topic into splits to redundancy and scalability.
+You can see `Log` stored on disk. But with `Partition`, you can't. `Partition` is handled logically.
+
 
 ####  Partitions group data by key
+When a message is sent to kafka, you can specify a `key` option for that message. 
 
-If the keys aren't null. Kafka uses the following formula
+If the key(key will be explained in the next section) isn't null. Kafka uses the following formula to calculate which partition the message will be sent to.
 
 ```
-HashCode.(key) % number of partitions
+Producer -> message(key, value) -> Kafka
+// Kafka choose a partition by using the formula
+target_partition = HashCode.(key) % number of partitions
 ```
 Records with the same key will always be sent to the same partition and in order.
 
+### Important characteristics of Kafka
+
+- Kafka stores and retrives message from topic. Doesn't keep any state of producers or consumers
+
+- Messsages are written into Kafka in batches. A batch is just a collection of messages, all of which are being produced to the same topic and partition.
 
 ## Producers and Consumers
 
@@ -200,7 +207,9 @@ Consumers groups used to read and process data in parallel.
 
 ![](images/2020-09-16-16-10-43.png)
 
-How consumers can read data in parallel without duplicate reads? Kafka provide a simple solution for this problem. Only one consumer own a partition at any point in time
+How consumers can read data in parallel without duplicate reads? Kafka provide a simple solution for this problem.
+ - A partition can only be consumed by one consumer at a time. 
+ - But a consumer can consumer multiple partitions parallelly.
 
 ![](images/2020-09-16-16-12-50.png)
 
@@ -215,7 +224,7 @@ If the number of consumers in a group exceeds the number of partitions in a topi
 
 ![](images/2020-09-16-16-33-19.png)
 
-you create a new consumer group for each application that needs all
+You can create a new consumer group for each application that needs all
 the messages from one or more topics
 
 
@@ -223,15 +232,12 @@ the messages from one or more topics
 - Create a `ProducerRecord`, which must include the topic we want to send the record to and a value. Optionally, we can also specify a key and/or a partition.
 - Then Serialized the key and value objects to `ByteArrays` so they can be sent over the network
 - Data is sent to a `partitioner`. The partition check if ProducerRecord has a specifed `partition` option. If yes, it doesn't do anything an reply the `partition` we specify. If not, the partitioner will choose a `partition` for us.
-- Once a `partition` is selected, the producer then add the record to a `batch` of reords that will also be sent to the same topic and partition.
+- Once a `partition` is selected, the producer then add the record to a `batch` of records that will also be sent to the same topic and partition.
 - When broker receives the messages, it sends back a response. 
   - If the messages were successfully writtent to Kafka, return a RecordMetatData object contains `<topic, partition, offset>`
   - If failed, the broker will return an error. The producer may retry sending the message a few more times before giving up and returning an error.
 
 ![](images/2020-09-16-13-57-54.png)
-
-
-
 
 
 ## Broker and Clusters
@@ -243,7 +249,9 @@ A single Kafka server is called a broker. The broker receives messages from prod
 Brokers are desigined to operate as part of a cluster.
 
 ### Cluster membership management with Zookeeper
-Kafka uses Apache Zookeeper to maintain the list of brokers that are currently members of a cluster. ZooKeeper is a consistent file system for configuration information
+Kafka uses Apache Zookeeper to maintain the list of brokers that are currently members of a cluster. ZooKeeper is a consistent file system for configuration information.
+
+It acts as a centralized service and helps to keep track of the Kafka cluster nodes status, Kafka topics, and partitions. 
 ![](images/2020-09-20-10-55-33.png)
 
 
@@ -385,11 +393,11 @@ Retention policy:
 - **acks**: Controls how many partition replicas must receive the record before the producer can consider write successful.
  
   - acks = 0: the producer will not wait for a reply from the broker before assuming the message was sent successfully. The message may be lost but it can send messaes as fast as the network will support, so this setting can be used to achieve very high throughput
-  - acks=1: With a setting of 1, the producer will consider the write successful when the leader receives the record. The leader broker will know to immediately respond the moment it receives the record and not wait any longer.
+  - acks=1: With a setting of 1, the producer will consider the write successful when the leader receives the record. The leader replica will know to immediately respond the moment it receives the record and not wait any longer.
 
    - acks=all: the producer will consider the write successful when all of the in-sync replicas receive the record. This is achieved by the leader broker being smart as to when it responds to the request — it’ll send back a response once all the in-sync replicas receive the record themselves.
    - Acks=all must be used in conjunction with `min.insync.replicas`
-   - In-sync replicas: An in-sync replica (ISR) is a broker that has the latest data for a given partition. A leader is always an in-sync replica. A follower is an in-sync replica only if it has fully caught up to the partition it’s following.
+   - In-sync replicas: An in-sync replica (ISR) is a replica that has the latest data for a given partition. A leader is always an in-sync replica. A follower is an in-sync replica only if it has fully caught up to the partition it’s following.
     - Minimum In-Sync Replica: `min.insync.replicas` is a config on the broker that denotes the minimum number of in-sync replicas required to exist for a broker to allow acks=all requests. That means if you use `replication.factor=3, min.insync=2, acks=all`, you can only tolerate 1 broker going down, otherwise the producer will receive an exception on send.
   - `max.in.flight.request.per.connection`: setting while controls how many produce requests can be made in parallel. Set it to 1 if you need to ensure ordering(may impact throughput)
   ![](images/2020-09-16-14-44-54.png)
@@ -483,7 +491,7 @@ During the `rebalance` activity, none of the consumers are allowed to read any m
 
 #### Consumer offset
 - Kafka stores the offset at which a consumer group has been reading
-- The offsets commited liev a Kafka topic named __consumer__offsets
+- The offsets are commited in a Kafka topic named __consumer__offsets
 - If a consumer dies, it will be able to read back from where it left off thanks to the commited consumer offset
 
 #### Consumer offset reset behaviours
@@ -492,7 +500,7 @@ During the `rebalance` activity, none of the consumers are allowed to read any m
 - `auto.offset.reset=latest`: will read the end of the log
 - `auto.offset.reset=earliest`: will read from the start of the log
 - `auto.offset.reset=none`: Wil throw exception if no offset is found
-- `offset.retention.minutes: Consumer offsets can be lost if a consumer hasn't read new data in 7 days
+- `offset.retention.minutes`: Consumer offsets can be lost if a consumer hasn't read new data in 7 days
 
 #### Delivery semantics for consumers
 - At most once: offsets are commited as soons as the message is received 
@@ -510,6 +518,22 @@ During the `rebalance` activity, none of the consumers are allowed to read any m
 
 - Exactly once: only from kafka to kafka
 
+#### Offset management
+![](images/2020-09-17-23-02-50.png)
+In the event of rebalancing, when a consumer is a asigned the same partition, it should ask  a question where to start. What is already process by the previous owner? That's where Commited offset comes into play
+
+- Current offset: Delivered records
+- Commited offset: Processed records
+
+How to commit?
+- AutoCommit:
+  - `enable.auto.commit`
+  - `auto.commit.interval.ms`
+Can't avoid processing a record multiple times. If rebalancing happens before producer hasn't automatically commited
+- Manual Commit:
+  - Commit sync: block
+  - Commit async: Commit async will not retry
+  
 #### Consumer offset commits strategies
 2 strategies
 - (easy) enable.auto.commit = true & synchronous processing of batches
@@ -527,27 +551,13 @@ What if the producer sends bad data? The consumers break. So
 ![](images/2020-09-16-22-42-34.png)
 
 
-#### Offset management
-![](images/2020-09-17-23-02-50.png)
-In the event of rebalancing, when a consumer is a asigned the same partition, it should ask  a question where to start. What is already process by the previous owner? That's where Commited offset comes into play
 
-- Current offset: Delivered records
-- Commited offset: Processed records
-
-How to commit?
-- AutoCommit:
-  - `enable.auto.commit`
-  - `auto.commit.interval.ms`
-Can't avoid processing a record multiple times. If rebalancing happens before producer hasn't automatically commited
-- Manual Commit:
-  - Commit sync: block
-  - Commit async: Commit async will not retry
 
 
 
 ## Case study
 ### Video analytics - MovieFlix
-- Make sure he suer can resume the video where they left it off
+- Make sure the user can resume the video where they left it off
 - Build a user profile in real time
 - Recommend the next show to the user in real time
 - Store all the data in analytics store
@@ -605,8 +615,14 @@ Client uses another request type called a `metadata` request to get information 
 replicas for each partition, and which replica is the leader
 
 ![](images/2020-09-20-08-32-22.png)
+```
 Client -> meta data request(list of interested topics) -> Server
-Leader > Respond { partitions of the topic, the replicas for each patition, which replica is the leader  } -> Server
+Leader -> Respond { 
+    partitions of the topic,
+    the replicas for each patition,
+    which replica is the leader
+  } -> Server
+```
 
 Client usually cache this information and priodically refresh this information.(controlled by 
 `data.max.age.ms` configuration parameter)
