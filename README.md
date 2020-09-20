@@ -156,7 +156,7 @@ Topics are broken down into a number of `partitions`.
 At this time, you can come up with a question. Wait a minute, Aren't Log and Partition the same thing?
 At first glance, they seems to look the same, but here are the difference: 
 - Log: physical part of a topic, where a topic is stored on the disk.
-- Partition: logical unit used to break down a topic into splits to redundancy and scalability.
+- Partition: logical unit used to break down a topic into splits for redundancy and scalability.
 You can see `Log` stored on disk. But with `Partition`, you can't. `Partition` is handled logically.
 
 
