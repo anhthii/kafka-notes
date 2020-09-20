@@ -5,8 +5,12 @@ These are the most relevant contents that I collected through some books and cou
 If you want to get a deeper understanding of Kafka or how to use Kafka Stream for big data processing. I highly recommend you check out the material including some books and courses that I linked in the reference section.
 
 
+
+
 ![](images/2020-09-20-13-00-07.png)
 <sup>image from https://www.cloudkarafka.com/blog/<sup>
+
+If you want a better viewing exeperience, visit: https://anhthi.netlify.app/docs/architecture/message_queue/kafka
 
 Table of contents:
 
