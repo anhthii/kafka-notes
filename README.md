@@ -1,6 +1,9 @@
 # Kafka notes
 
-These are the most relavant contents that I collected through some books and courses. After reading these notes, you will grasp a basic understanding of Kafka as well as how to configure your applications to use kafka properly.
+These are the most relevant contents that I collected through some books and courses then organized to help anyone who wants to learn Apache Kafka without going through too many resources on the Internet. Below might be the only material you need to grasp quite a deep understanding of Kafka as well as how to configure your applications to use Kafka properly in production.
+
+If you want to get a deeper understanding of Kafka or how to use Kafka Stream for big data processing. I highly recommend you check out the material including some books and courses that I linked in the reference section.
+
 
 ![](images/2020-09-20-13-00-07.png)
 <sup>image from https://www.cloudkarafka.com/blog/<sup>
