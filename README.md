@@ -2,6 +2,9 @@
 
 These are the most relavant contents that I collected through some books and courses. After reading these notes, you will grasp a basic understanding of Kafka as well as how to configure your applications to use kafka properly.
 
+![](images/2020-09-20-13-00-07.png)
+<sup>image from https://www.cloudkarafka.com/blog/<sup>
+
 Table of contents:
 
   - [Kafka introduction](#kafka-introduction)
