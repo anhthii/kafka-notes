@@ -1,8 +1,9 @@
 # Kafka notes
 
-These are the most relavant contents that I collected through some books and courses. 
+These are the most relavant contents that I collected through some books and courses. After reading these notes, you will grasp a basic understanding of Kafka as well as how to configure your applications to use kafka properly.
 
-- [Kafka notes](#kafka-notes)
+Table of contents:
+
   - [Kafka introduction](#kafka-introduction)
     - [The data problem](#the-data-problem)
     - [Why use Kafka?](#why-use-kafka)
