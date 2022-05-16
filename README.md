@@ -87,7 +87,7 @@ That's where Apache Kafka comes in as an effective solution. Apache Kafka is a p
 ### Why use Kafka?
 - **Multiple producers and consumers at any given time** without interfering with each other.  This is in contrast to many queuing system where once a message is consumed by one client
 - **Disk-Based retention**: 
-  - Consumers do not always need to work in real time. Messages are commited to disk and stay the for some period of time.
+  - Consumers do not always need to work in real time. Messages are commited to disk and stay for some periods of time.
   - There is no danger of losing data.
 - **Fast**: Kafka is a good solution for applications that require a high througput, low latency messaging solution. Kafka can write up to 2 million requests per second
 - **Scalable**: 
@@ -96,7 +96,7 @@ That's where Apache Kafka comes in as an effective solution. Apache Kafka is a p
 
 ### Why is Kafka fast?
 
-- **Zero Copy**: Basically Kafka calls the OS kernal directly rather than at the application layer to move data fast.
+- **Zero Copy**: Basically Kafka calls the OS kernel directly rather than at the application layer to move data fast.
 - **Batch data in chunks**:  Kafka is all about batching the data into chunks. This minimises cross machine latency with all the buffering/copying that accompanies this.
 - **Avoids Random Disk Access**: Kafka is designed to access the disk in sequential manner. This enables it to get similar speeds from a physical disk compared with memory.
 - **Can scale Horizontally**: The ability to have thousands of partitions for a single topic spread among thousands of machines means Kafka can handle huge loads.
@@ -110,7 +110,7 @@ That's where Apache Kafka comes in as an effective solution. Apache Kafka is a p
 
 - **Activity tracking**: The original use case for Kafka, designed at LinkedIn, is that of user activity tracking.
 
-- **Messaging**: wher applications need to send notifications to users. Those can produce messages without needing to be concerend about formatting. Then an other applicatoin can read all the messages and handle them consistently
+- **Messaging**: when applications need to send notifications to users. Those can produce messages without needing to be concerend about formatting. Then an other applicatoin can read all the messages and handle them consistently
 - **Metrics and logging**
 - **Commit log**: Database changes can be published to Kafka and applications can easily monitor this stream to receive live updates as they happen. 
 - **Stream processing**: Kafka is extremely good for streaming and processing huge datasets.
@@ -154,7 +154,7 @@ Topics are broken down into a number of `partitions`.
 
 ### Difference between Partition and Log?
 At this time, you can come up with a question. Wait a minute, Aren't Log and Partition the same thing?
-At first glance, they seems to look the same, but here are the difference: 
+At first glance, they seem to look the same, but here are the difference: 
 - Log: physical part of a topic, where a topic is stored on the disk.
 - Partition: logical unit used to break down a topic into splits for redundancy and scalability.
 You can see `Log` stored on disk. But with `Partition`, you can't. `Partition` is handled logically.
@@ -174,16 +174,16 @@ Records with the same key will always be sent to the same partition and in order
 
 ### Important characteristics of Kafka
 
-- Kafka stores and retrives message from topic. Doesn't keep any state of producers or consumers
+- Kafka stores and retrieves message from topic. Doesn't keep any state of producers or consumers
 
-- Messsages are written into Kafka in batches. A batch is just a collection of messages, all of which are being produced to the same topic and partition.
+- Messages are written into Kafka in batches. A batch is just a collection of messages, all of which are being produced to the same topic and partition.
 
 ## Producers and Consumers
 
 ### Producer
 `Producers` create new messages. In other publish/subscribe systems, these may be called publishers or writers.  A message will be produced to a specific topic.
- - The producer does not care what partition a specifict message is written to and will balance messages over all partitions of a topic evenyly
- - In some case, the producer will direct messages to specific partitions using `message key`. Messages with a specified `message key` will be ensured to come in the right order in a partition.
+ - The producer does not care what partition a specific message is written to and will balance messages over all partitions of a topic evenly
+ - In some cases, the producer will direct messages to specific partitions using `message key`. Messages with a specified `message key` will be ensured to come in the right order in a partition.
   ![](images/2020-09-16-16-45-51.png)
 
 ### Consumer
@@ -196,7 +196,7 @@ The `offset` is a simple integer number that is used by Kafka to maintain the cu
 ![](images/2020-09-20-11-24-47.png)
 
 
-`Consumers` work as part of a `consumer group`, which is one or more consumers that work together to consume a topic. Group assures that each each partition is only consumed by one member. If a single consumer fails, the remaning members of group will rebalance the partitions being consumed to take over the missing member.
+`Consumers` work as part of a `consumer group`, which is one or more consumers that work together to consume a topic. Group assures that each partition is only consumed by one member. If a single consumer fails, the remaning members of group will rebalance the partitions being consumed to take over the missing member.
 
 #### Consumer group
 
@@ -294,7 +294,7 @@ There are two types of replica:
 
 When `a controller` notices that a broker left the cluster. All the partitions that had a leader on that broker will need a new leader, so the controller  will choose a new leader for all of these partitions
 
-## Confugrations
+## Configurations
 
 
 
@@ -338,7 +338,7 @@ Why should I care about topic config?
 - These parameters impact performance and topic behavior
 
 #### Retention and clean up policies(Compaction)
-Retention is the durable storage of messages for some period of time. For example, a tracking topic might be retained for several days, whereas application metrics might be reatined for only a few hours.
+Retention is the durable storage of messages for some period of time. For example, a tracking topic might be retained for several days, whereas application metrics might be retained for only a few hours.
 
 Retention policy:
 - Delete: delete events older than retention time
@@ -371,7 +371,7 @@ Retention policy:
 - Partitions are made of ...segments(files)
   ![](images/2020-09-17-10-15-20.png)
 - Active segment means the segment are still being written to
-- `log.segment.bytes`: the max side of a single segment in bytes
+- `log.segment.bytes`: the max size of a single segment in bytes
 - `log.segment.ms`: the time Kafka will wait before comming the segment if not full
 
 ![](images/2020-09-17-10-18-20.png)
@@ -415,11 +415,11 @@ https://medium.com/better-programming/kafka-acks-explained-c0515b3b707e#:~:text=
 ![](images/2020-09-16-16-42-42.png)
 
 
-- **buffer memory**: this sets the amount of memory the producer will use to buffer messagse waiting to be sent to brokers.
-- **compression.type**: By default, messages are sent uncompressed. We can ues `gzip`, `lz4`. Enabling compression redue network utilization and storage
+- **buffer memory**: this sets the amount of memory the producer will use to buffer messages waiting to be sent to brokers.
+- **compression.type**: By default, messages are sent uncompressed. We can ues `gzip`, `lz4`. Enabling compression reduce network utilization and storage
 - **retries**: How many times the producer will retry sending the message
 - **batch.size**: The producer will batch them together. When the batch is full, all the messages in the batch will be sent.
-- **client.id**: Use by the brokers to identify messages esnt from the client
+- **client.id**: Use by the brokers to identify messages sent from the client
 
 
 #### Message compression for high-throughpput producer
@@ -483,7 +483,7 @@ During the `rebalance` activity, none of the consumers are allowed to read any m
 
 ![](images/2020-09-17-23-22-26.png)
 
-- **session.tmeout.ms**: (default 10 seconds)
+- **session.timeout.ms**: (default 10 seconds)
   - If no heartbeat is sent during that period, the consumer is considered dead
   - Set even lower to faster consumer rebalances
   
@@ -491,7 +491,7 @@ During the `rebalance` activity, none of the consumers are allowed to read any m
 
 #### Consumer offset
 - Kafka stores the offset at which a consumer group has been reading
-- The offsets are commited in a Kafka topic named __consumer__offsets
+- The offsets are commited in a Kafka topic named **__consumer__offsets**
 - If a consumer dies, it will be able to read back from where it left off thanks to the commited consumer offset
 
 #### Consumer offset reset behaviours
@@ -520,7 +520,7 @@ During the `rebalance` activity, none of the consumers are allowed to read any m
 
 #### Offset management
 ![](images/2020-09-17-23-02-50.png)
-In the event of rebalancing, when a consumer is a asigned the same partition, it should ask  a question where to start. What is already process by the previous owner? That's where Commited offset comes into play
+In the event of rebalancing, when a consumer is a assigned the same partition, it should ask a question where to start. What is already processed by the previous owner? That's where Commited offset comes into play
 
 - Current offset: Delivered records
 - Commited offset: Processed records
@@ -537,7 +537,7 @@ Can't avoid processing a record multiple times. If rebalancing happens before pr
 #### Consumer offset commits strategies
 2 strategies
 - (easy) enable.auto.commit = true & synchronous processing of batches
-If you don't use synchronous processing, you will be in "at-most-once" behavior because offsets will be commited before your data is processed. Quite risky for begiiners
+If you don't use synchronous processing, you will be in "at-most-once" behavior because offsets will be commited before your data is processed. Quite risky for beginners
 - (medium) enable.auto.commit = false & manual commit of offsets
 ![](images/2020-09-16-21-44-51.png)
 
@@ -603,7 +603,7 @@ Gettaxis is a company that allows people to match with taxi drivers on deman, ri
 ## Kafka internal
 
 ### Request processing
-Kafka has a binary protocol that sepcifies the format of the requests and how brokers respond to them
+Kafka has a binary protocol that specifies the format of the requests and how brokers respond to them
 
 Every broker has:
 - **Acceptor**: A thread that handling creating connection
@@ -634,8 +634,7 @@ if a new broker was added or some replicas were moved to a new broker. A client 
 ### Physical storage
 #### Partition Allocation
 
-Suppose you have 6 brokers and you decide to create a topic with 10 parti‐
-tions and a replication factor of 3. Kafka now has 30 partition replicas to allocate to 6
+Suppose you have 6 brokers and you decide to create a topic with 10 partitions and a replication factor of 3. Kafka now has 30 partition replicas to allocate to 6
 brokers.
 - 5 replicas per broker
 - for each partition, each replica is on a different broker.
