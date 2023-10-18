@@ -85,11 +85,11 @@ Table of contents:
 That's where Apache Kafka comes in as an effective solution. Apache Kafka is a publish-subscribe based durable messaging system developed by Linkedin.
 
 ### Why use Kafka?
-- **Multiple producers and consumers at any given time** without interfering with each other.  This is in contrast to many queuing system where once a message is consumed by one client
+- **Multiple producers and consumers at any given time** without interfering with each other.  This is in contrast to many queuing system where one message is consumed by one client
 - **Disk-Based retention**: 
   - Consumers do not always need to work in real time. Messages are commited to disk and stay for some periods of time.
   - There is no danger of losing data.
-- **Fast**: Kafka is a good solution for applications that require a high througput, low latency messaging solution. Kafka can write up to 2 million requests per second
+- **Fast**: Kafka is a good solution for applications that require a high throughput, low latency messaging solution. Kafka can write up to 2 million requests per second
 - **Scalable**: 
   - Expansions can be performed while the cluster is online, with no impact on the availability of the system as a whole.
 - **High Performance**: Excellent performance under high load. 
@@ -110,7 +110,7 @@ That's where Apache Kafka comes in as an effective solution. Apache Kafka is a p
 
 - **Activity tracking**: The original use case for Kafka, designed at LinkedIn, is that of user activity tracking.
 
-- **Messaging**: when applications need to send notifications to users. Those can produce messages without needing to be concerend about formatting. Then an other applicatoin can read all the messages and handle them consistently
+- **Messaging**: when applications need to send notifications to users. Those can produce messages without needing to be concerned about formatting. Then an other applicatoin can read all the messages and handle them consistently.
 - **Metrics and logging**
 - **Commit log**: Database changes can be published to Kafka and applications can easily monitor this stream to receive live updates as they happen. 
 - **Stream processing**: Kafka is extremely good for streaming and processing huge datasets.
@@ -209,7 +209,7 @@ Consumers groups used to read and process data in parallel.
 
 How consumers can read data in parallel without duplicate reads? Kafka provide a simple solution for this problem.
  - A partition can only be consumed by one consumer at a time. 
- - But a consumer can consumer multiple partitions parallelly.
+ - But a consumer can consume multiple partitions parallelly.
 
 ![](images/2020-09-16-16-12-50.png)
 
@@ -219,7 +219,7 @@ For example:
 ![](images/2020-09-16-16-30-36.png)
 ![](images/2020-09-16-16-31-06.png)
 
-If the number of consumers in a group exceeds the number of partitions in a topic. Then there will be some idle consumer and get no messages at all
+If the number of consumers in a group exceeds the number of partitions in a topic. Then there will be some idle consumer that get no messages at all
 ![](images/2020-09-16-16-14-52.png)
 
 ![](images/2020-09-16-16-33-19.png)
@@ -234,7 +234,7 @@ the messages from one or more topics
 - Data is sent to a `partitioner`. The partition check if ProducerRecord has a specifed `partition` option. If yes, it doesn't do anything an reply the `partition` we specify. If not, the partitioner will choose a `partition` for us.
 - Once a `partition` is selected, the producer then add the record to a `batch` of records that will also be sent to the same topic and partition.
 - When broker receives the messages, it sends back a response. 
-  - If the messages were successfully writtent to Kafka, return a RecordMetatData object contains `<topic, partition, offset>`
+  - If the messages were successfully writtent to Kafka, return a RecordMetaData object contains `<topic, partition, offset>`
   - If failed, the broker will return an error. The producer may retry sending the message a few more times before giving up and returning an error.
 
 ![](images/2020-09-16-13-57-54.png)
